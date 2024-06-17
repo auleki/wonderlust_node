@@ -1,11 +1,18 @@
 import express from 'express'
 import mongoose from 'mongoose';
 import cors from 'cors'
+import morgan from 'morgan'
+import dotenv from 'dotenv'
+import dreamLocationRoutes from './routes/dreamLocation.route.js'
+
+// Enable environment variables
+dotenv.config()
 
 export default class Server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT || 3000;
+        this.dbURI = process.env.MONGODB_URI || ''
 
         // Connect to MongoDB
         this.connectToDatabase();
@@ -14,25 +21,26 @@ export default class Server {
         this.configureMiddleware();
 
         // Define routes
-        // this.configureRoutes();
+        this.configureRoutes();
     }
 
     connectToDatabase() {
-        const dbURI = 'mongodb+srv://admin:admin007@cluster0.gbijo5h.mongodb.net/dev?retryWrites=true&w=majority&appName=Cluster0';
-        mongoose.connect(dbURI)
+        mongoose.connect(this.dbURI)
             .then(() => console.log('MongoDB connected'))
             .catch(err => console.log('MongoDB connection error:', err));
     }
 
     configureMiddleware() {
         this.app.use(express.json());
+        this.app.use(morgan('tiny'))
         this.app.use(cors());
     }
 
     // Example of configuring routes
-    // configureRoutes() {
-    //     this.app.use('/api', routes);
-    // }
+    configureRoutes() {
+        // this.app.use('/api', routes);
+        this.app.use('/dream-locations', dreamLocationRoutes)
+    }
 
     start() {
         this.app.listen(this.port, () => {
