@@ -5,6 +5,10 @@ import morgan from 'morgan'
 import dotenv from 'dotenv'
 import dreamLocationRoutes from './routes/dreamLocation.route.js'
 
+if (process.env.NODE_ENV === 'development') {
+    dotenv.config()
+}   
+
 // Enable environment variables
 dotenv.config()
 
